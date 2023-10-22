@@ -20,6 +20,7 @@
     "vite-plugin-solid-svg": "^0.7.0"
   },
   "dependencies": {
+    "aws4fetch": "^1.0.17",
     "solid-js": "^1.7.6",
     "tinykeys": "^2.1.0"
   }

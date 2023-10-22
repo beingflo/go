@@ -6,6 +6,7 @@ import { useStore } from "./store";
 import { validateEvent } from "./utils";
 import Link from "./Link";
 import NewLink from "./NewLink";
+import { s3Sync } from "./s3-utils";
 
 const App: Component = () => {
   const [state, { toggleHelp, accessLink }] = useStore();
@@ -17,15 +18,23 @@ const App: Component = () => {
   let searchInputRef;
   let newLinkInputRef;
 
+  const syncState = () => {
+    s3Sync(state);
+  };
+
+  document.addEventListener("visibilitychange", syncState);
+
+  onCleanup(() => document.removeEventListener("visibilitychange", syncState));
+
   const links = () => {
-    const visibleLinks = state.links.filter((link) => !link.deleted);
-    const terms = searchTerm().split(" ");
-    const filteredLinks = visibleLinks.filter((link) =>
+    const visibleLinks = state.links?.filter((link) => !link.deleted) ?? [];
+    const terms = searchTerm()?.split(" ");
+    const filteredLinks = visibleLinks?.filter((link) =>
       terms.every(
         (term) => link.url?.includes(term) || link.description?.includes(term)
       )
     );
-    filteredLinks.sort((a, b) => b.numAccessed - a.numAccessed);
+    filteredLinks?.sort((a, b) => b.numAccessed - a.numAccessed);
     return filteredLinks;
   };
 
