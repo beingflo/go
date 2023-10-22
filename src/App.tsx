@@ -51,12 +51,16 @@ const App: Component = () => {
       return;
     }
     const link = links()[selectedLinkIdx()];
-    accessLink(link.id);
+    accessLink(link?.id);
+
+    if (!link) {
+      return;
+    }
 
     if (newTab) {
-      window.open(link.url);
+      window.open(link?.url);
     } else {
-      location.href = link.url;
+      location.href = link?.url;
     }
   };
 
