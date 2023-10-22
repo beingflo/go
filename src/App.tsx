@@ -33,8 +33,9 @@ const App: Component = () => {
           <div class="w-full max-w-8xl mx-auto">
             <input
               type="text"
-              class="focus:outline-none w-full text-2xl placeholder:font-thin block mb-12 border-0 focus:ring-0"
+              class="focus:outline-none w-full text-md placeholder:font-thin block mb-12 border-0 focus:ring-0"
               placeholder="Go somewhere..."
+              autofocus
               value={searchTerm()}
               onChange={(event) => setSearchTerm(event?.currentTarget?.value)}
             />
