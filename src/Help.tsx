@@ -28,6 +28,7 @@ const Help: Component = () => {
       <Instruction left="cmd + Enter" right="Visit selected link in new tab" />
       <Instruction left="arrow up / down" right="Change selected link" />
       <Instruction left="c" right="Toggle configuration screen" />
+      <Instruction left="g o" right="Focus search input" />
       <h2 class="text-xl font-semibold mt-12">S3 synchronization and backup</h2>
       <p class="mt-4 pb-10">
         In the configuration of this app, you can add an endpoint and

@@ -3,6 +3,7 @@ import { useStore } from "./store";
 
 export type NewLinkProps = {
   onEditEnd: () => void;
+  ref: any;
 };
 
 const NewLink: Component<NewLinkProps> = (props) => {
@@ -25,6 +26,7 @@ const NewLink: Component<NewLinkProps> = (props) => {
             autofocus
             class="w-full border border-dashed border-gray-400 focus:outline-none"
             placeholder="url"
+            ref={props.ref}
             onInput={(event) => setNewLinkUrl(event?.currentTarget.value)}
           />
         </form>

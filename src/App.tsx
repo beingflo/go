@@ -14,6 +14,9 @@ const App: Component = () => {
   const [searchTerm, setSearchTerm] = createSignal("");
   const [selectedLinkIdx, setSelectedLinkIdx] = createSignal(0);
 
+  let searchInputRef;
+  let newLinkInputRef;
+
   const links = () => {
     const visibleLinks = state.links.filter((link) => !link.deleted);
     const terms = searchTerm().split(" ");
@@ -28,6 +31,7 @@ const App: Component = () => {
 
   const onEdit = () => {
     setNewLinkMode(true);
+    newLinkInputRef?.focus();
   };
 
   const followLink = (newTab: boolean) => {
@@ -46,11 +50,17 @@ const App: Component = () => {
 
   const cleanup = tinykeys(window, {
     n: validateEvent(onEdit),
-    Escape: () => setNewLinkMode(false),
+    Escape: () => {
+      setNewLinkMode(false);
+      searchInputRef.blur();
+    },
     Enter: () => followLink(false),
     "$mod+Enter": () => followLink(true),
     h: validateEvent(toggleHelp),
     c: validateEvent(() => setShowConfig(!showConfig())),
+    "g o": validateEvent(() => {
+      searchInputRef.focus();
+    }),
     ArrowUp: () => setSelectedLinkIdx((oldIdx) => Math.max(oldIdx - 1, 0)),
     ArrowDown: () =>
       setSelectedLinkIdx((oldIdx) => Math.min(oldIdx + 1, links().length - 1)),
@@ -66,6 +76,7 @@ const App: Component = () => {
             <form onSubmit={(event) => event.preventDefault()}>
               <input
                 type="text"
+                ref={searchInputRef}
                 class="focus:outline-none w-full text-md placeholder:font-thin block mb-12 border-0 focus:ring-0"
                 placeholder="Go somewhere..."
                 autofocus
@@ -75,7 +86,10 @@ const App: Component = () => {
             </form>
             <div class="flex flex-col gap-4">
               <Show when={newLinkMode()}>
-                <NewLink onEditEnd={() => setNewLinkMode(false)} />
+                <NewLink
+                  ref={newLinkInputRef}
+                  onEditEnd={() => setNewLinkMode(false)}
+                />
               </Show>
               <For each={links()}>
                 {(link, idx) => (
