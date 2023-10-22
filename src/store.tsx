@@ -1,5 +1,7 @@
 import { createContext, createEffect, useContext } from "solid-js";
-import { createStore, produce } from "solid-js/store";
+import { createStore } from "solid-js/store";
+
+export const getNewId = () => crypto.randomUUID();
 
 export const storeName = "store";
 
@@ -22,6 +24,23 @@ export function StoreProvider(props) {
       },
       setS3Config(config: Object) {
         setState({ s3: config });
+      },
+      newLink(url: string, description: string) {
+        setState({
+          links: [
+            ...(state.links ?? []),
+            {
+              id: getNewId(),
+              url,
+              description,
+              createdAt: Date.now(),
+              lastAccessedAt: null,
+              numAccessed: 0,
+              deleted: false,
+            },
+          ],
+          version: state.version + 1,
+        });
       },
     },
   ];

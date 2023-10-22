@@ -1,17 +1,24 @@
-import { Component, createSignal, onCleanup, Show } from "solid-js";
+import { Component, createSignal, For, onCleanup, Show } from "solid-js";
 import { tinykeys } from "tinykeys";
 import Help from "./Help";
 import Configuration from "./Configuration";
 import { useStore } from "./store";
 import { validateEvent } from "./utils";
 import Link from "./Link";
+import NewLink from "./NewLink";
 
 const App: Component = () => {
   const [state, { toggleHelp }] = useStore();
   const [showConfig, setShowConfig] = createSignal(false);
+  const [newLinkMode, setNewLinkMode] = createSignal(false);
   const [searchTerm, setSearchTerm] = createSignal("");
 
+  const onEdit = () => {
+    setNewLinkMode(true);
+  };
+
   const cleanup = tinykeys(window, {
+    n: validateEvent(onEdit),
     h: validateEvent(toggleHelp),
     c: validateEvent(() => setShowConfig(!showConfig())),
   });
@@ -25,28 +32,26 @@ const App: Component = () => {
           <div class="w-full max-w-8xl mx-auto">
             <input
               type="text"
-              class="focus:outline-none text-2xl block mb-12 border-0 placeholder-[#392c084e] focus:ring-0"
-              placeholder="Go somewhere"
+              class="focus:outline-none w-full text-2xl placeholder:font-thin block mb-12 border-0 focus:ring-0"
+              placeholder="Go somewhere..."
               value={searchTerm()}
               onChange={(event) => setSearchTerm(event?.currentTarget?.value)}
             />
             <div class="flex flex-col gap-2">
-              <Link
-                title="my website"
-                url="https://marending.dev"
-                createdAt="21-05-1994"
-                lastAccessedAt="10-10-2023"
-                numAccessed={123}
-                selected={true}
-              />
-              <Link
-                title="Check dns propagation"
-                url="https://www.whatsmydns.net/"
-                createdAt="21-05-1994"
-                lastAccessedAt="10-10-2023"
-                numAccessed={13}
-                selected={false}
-              />
+              <Show when={newLinkMode()}>
+                <NewLink onEditEnd={() => setNewLinkMode(false)} />
+              </Show>
+              <For each={state.links}>
+                {(link) => (
+                  <Link
+                    id={link.id}
+                    url={link.url}
+                    description={link.description}
+                    lastAccessedAt={link.lastAccessedAt}
+                    numAccessed={link.numAccessed}
+                  />
+                )}
+              </For>
             </div>
           </div>
         </div>
