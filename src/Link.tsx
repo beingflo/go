@@ -19,6 +19,7 @@ const Link: Component<LinkProps> = (props: LinkProps) => {
         <a
           href={props.url}
           class={`${props.selected ? "underline" : ""} truncate`}
+          title={props.url}
         >
           {props.url}
         </a>

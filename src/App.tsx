@@ -15,7 +15,15 @@ const App: Component = () => {
   const [selectedLinkIdx, setSelectedLinkIdx] = createSignal(0);
 
   const links = () => {
-    return state.links.filter((link) => !link.deleted);
+    const visibleLinks = state.links.filter((link) => !link.deleted);
+    const terms = searchTerm().split(" ");
+    const filteredLinks = visibleLinks.filter((link) =>
+      terms.every(
+        (term) => link.url?.includes(term) || link.description?.includes(term)
+      )
+    );
+    filteredLinks.sort((a, b) => b.numAccessed - a.numAccessed);
+    return filteredLinks;
   };
 
   const onEdit = () => {
@@ -62,7 +70,7 @@ const App: Component = () => {
                 placeholder="Go somewhere..."
                 autofocus
                 value={searchTerm()}
-                onChange={(event) => setSearchTerm(event?.currentTarget?.value)}
+                onInput={(event) => setSearchTerm(event?.currentTarget?.value)}
               />
             </form>
             <div class="flex flex-col gap-4">
