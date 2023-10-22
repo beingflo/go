@@ -8,20 +8,35 @@ import Link from "./Link";
 import NewLink from "./NewLink";
 
 const App: Component = () => {
-  const [state, { toggleHelp }] = useStore();
+  const [state, { toggleHelp, accessLink }] = useStore();
   const [showConfig, setShowConfig] = createSignal(false);
   const [newLinkMode, setNewLinkMode] = createSignal(false);
   const [searchTerm, setSearchTerm] = createSignal("");
+  const [selectedLinkIdx, setSelectedLinkIdx] = createSignal(0);
+
+  const links = () => {
+    return state.links.filter((link) => !link.deleted);
+  };
 
   const onEdit = () => {
     setNewLinkMode(true);
   };
 
+  const followLink = () => {
+    const link = links()[selectedLinkIdx()];
+    accessLink(link.id);
+    location.href = link.url;
+  };
+
   const cleanup = tinykeys(window, {
     n: validateEvent(onEdit),
     Escape: () => setNewLinkMode(false),
+    Enter: followLink,
     h: validateEvent(toggleHelp),
     c: validateEvent(() => setShowConfig(!showConfig())),
+    ArrowUp: () => setSelectedLinkIdx((oldIdx) => Math.max(oldIdx - 1, 0)),
+    ArrowDown: () =>
+      setSelectedLinkIdx((oldIdx) => Math.min(oldIdx + 1, links().length - 1)),
   });
 
   onCleanup(cleanup);
@@ -41,18 +56,19 @@ const App: Component = () => {
                 onChange={(event) => setSearchTerm(event?.currentTarget?.value)}
               />
             </form>
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-4">
               <Show when={newLinkMode()}>
                 <NewLink onEditEnd={() => setNewLinkMode(false)} />
               </Show>
-              <For each={state.links?.filter((link) => !link.deleted)}>
-                {(link) => (
+              <For each={links()}>
+                {(link, idx) => (
                   <Link
                     id={link.id}
                     url={link.url}
                     description={link.description}
                     lastAccessedAt={link.lastAccessedAt}
                     numAccessed={link.numAccessed}
+                    selected={idx() === selectedLinkIdx()}
                   />
                 )}
               </For>

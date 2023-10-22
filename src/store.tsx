@@ -25,6 +25,19 @@ export function StoreProvider(props) {
       setS3Config(config: Object) {
         setState({ s3: config });
       },
+      accessLink(id: string) {
+        setState(
+          produce((state: any) => {
+            state.links.forEach((link) => {
+              if (link.id === id) {
+                link.numAccessed += 1;
+                link.lastAccessedAt = Date.now();
+              }
+            });
+            state.version = state.version + 1;
+          })
+        );
+      },
       newLink(url: string, description: string) {
         setState({
           links: [
