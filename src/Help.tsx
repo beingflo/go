@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import Logo from "../src/arrow.svg";
+import Logo from "../src/line.svg";
 
 const Help: Component = () => {
   const Instruction = (props) => {
@@ -14,7 +14,7 @@ const Help: Component = () => {
   return (
     <div class="max-w-2xl mt-4 md:mt-12 mx-auto px-4">
       <div class="flex flex-row gap-4 items-center">
-        <Logo class="w-8 h-8" />
+        <Logo class="w-12 h-12" />
         <h1 class="text-2xl font-bold tracking-tight">go</h1>
       </div>
       <p class="mt-4">A tiny, opinionated link aggregation application.</p>
