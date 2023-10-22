@@ -22,20 +22,25 @@ const App: Component = () => {
     setNewLinkMode(true);
   };
 
-  const followLink = () => {
+  const followLink = (newTab: boolean) => {
     if (newLinkMode()) {
       return;
     }
     const link = links()[selectedLinkIdx()];
     accessLink(link.id);
 
-    location.href = link.url;
+    if (newTab) {
+      window.open(link.url);
+    } else {
+      location.href = link.url;
+    }
   };
 
   const cleanup = tinykeys(window, {
     n: validateEvent(onEdit),
     Escape: () => setNewLinkMode(false),
-    Enter: followLink,
+    Enter: () => followLink(false),
+    "$mod+Enter": () => followLink(true),
     h: validateEvent(toggleHelp),
     c: validateEvent(() => setShowConfig(!showConfig())),
     ArrowUp: () => setSelectedLinkIdx((oldIdx) => Math.max(oldIdx - 1, 0)),
