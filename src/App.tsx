@@ -43,7 +43,7 @@ const App: Component = () => {
               <Show when={newLinkMode()}>
                 <NewLink onEditEnd={() => setNewLinkMode(false)} />
               </Show>
-              <For each={state.links.filter((link) => !link.deleted)}>
+              <For each={state.links?.filter((link) => !link.deleted)}>
                 {(link) => (
                   <Link
                     id={link.id}
