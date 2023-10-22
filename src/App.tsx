@@ -26,6 +26,9 @@ const App: Component = () => {
 
   onCleanup(() => document.removeEventListener("visibilitychange", syncState));
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const searchUrlParam = urlParams.get("q");
+
   const links = () => {
     const visibleLinks = state.links?.filter((link) => !link.deleted) ?? [];
     const terms = searchTerm()?.split(" ");
@@ -56,6 +59,11 @@ const App: Component = () => {
       location.href = link.url;
     }
   };
+
+  if (searchUrlParam) {
+    setSearchTerm(searchUrlParam);
+    followLink(false);
+  }
 
   const cleanup = tinykeys(window, {
     n: validateEvent(onEdit),
