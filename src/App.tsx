@@ -23,8 +23,12 @@ const App: Component = () => {
   };
 
   const followLink = () => {
+    if (newLinkMode()) {
+      return;
+    }
     const link = links()[selectedLinkIdx()];
     accessLink(link.id);
+
     location.href = link.url;
   };
 

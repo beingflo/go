@@ -31,8 +31,22 @@ const Link: Component<LinkProps> = (props: LinkProps) => {
       <p class="hidden md:block text-sm font-light text-left col-span-4">
         {props.description}
       </p>
-      <p class="hidden md:block text-sm font-light text-right col-span-1">
-        {props.lastAccessedAt}
+      <p
+        class="hidden md:block text-sm font-light text-right col-span-1"
+        title={
+          props.lastAccessedAt &&
+          new Intl.DateTimeFormat("en-US", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }).format(new Date(props.lastAccessedAt))
+        }
+      >
+        {props.lastAccessedAt &&
+          new Intl.DateTimeFormat("en-US", {
+            day: "2-digit",
+            month: "long",
+          }).format(new Date(props.lastAccessedAt))}
       </p>
       <p class="hidden md:block text-sm font-light text-right col-span-1">
         {props.numAccessed}
