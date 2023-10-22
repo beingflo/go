@@ -19,6 +19,7 @@ const App: Component = () => {
 
   const cleanup = tinykeys(window, {
     n: validateEvent(onEdit),
+    Escape: () => setNewLinkMode(false),
     h: validateEvent(toggleHelp),
     c: validateEvent(() => setShowConfig(!showConfig())),
   });
@@ -41,7 +42,7 @@ const App: Component = () => {
               <Show when={newLinkMode()}>
                 <NewLink onEditEnd={() => setNewLinkMode(false)} />
               </Show>
-              <For each={state.links}>
+              <For each={state.links.filter((link) => !link.deleted)}>
                 {(link) => (
                   <Link
                     id={link.id}

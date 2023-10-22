@@ -1,4 +1,5 @@
 import { Component } from "solid-js";
+import { useStore } from "./store";
 
 export type LinkProps = {
   id: string;
@@ -10,6 +11,8 @@ export type LinkProps = {
 };
 
 const Link: Component<LinkProps> = (props: LinkProps) => {
+  const [, { deleteLink }] = useStore();
+
   return (
     <div class="w-full grid grid-cols-12 group gap-2">
       <div class="flex flex-row gap-2 text-sm font-light col-span-12 md:col-span-6 underline-offset-4">
@@ -17,7 +20,12 @@ const Link: Component<LinkProps> = (props: LinkProps) => {
           {props.url}
         </a>
         <div class="hidden group-hover:flex text-sm font-light flex-row gap-2">
-          <div class="hover:cursor-pointer">del</div>
+          <div
+            onClick={() => deleteLink(props.id)}
+            class="hover:cursor-pointer"
+          >
+            del
+          </div>
         </div>
       </div>
       <p class="hidden md:block text-sm font-light text-left col-span-4">

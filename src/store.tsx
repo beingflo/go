@@ -1,5 +1,5 @@
 import { createContext, createEffect, useContext } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createStore, produce } from "solid-js/store";
 
 export const getNewId = () => crypto.randomUUID();
 
@@ -41,6 +41,18 @@ export function StoreProvider(props) {
           ],
           version: state.version + 1,
         });
+      },
+      deleteLink(id: string) {
+        setState(
+          produce((state: any) => {
+            state.links.forEach((link) => {
+              if (link.id === id) {
+                link.deleted = true;
+              }
+            });
+            state.version = state.version + 1;
+          })
+        );
       },
     },
   ];
