@@ -102,7 +102,10 @@ const App: Component = () => {
                 placeholder="Go somewhere..."
                 autofocus
                 value={searchTerm()}
-                onInput={(event) => setSearchTerm(event?.currentTarget?.value)}
+                onInput={(event) => {
+                  setSearchTerm(event?.currentTarget?.value);
+                  setSelectedLinkIdx(0);
+                }}
               />
             </form>
             <div class="flex flex-col gap-4">
