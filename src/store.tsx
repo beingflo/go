@@ -55,6 +55,19 @@ export function StoreProvider(props) {
           version: state.version + 1,
         });
       },
+      updateLink(id: string, url: string, description: string) {
+        setState(
+          produce((state: any) => {
+            state.links.forEach((link) => {
+              if (link.id === id) {
+                link.url = url;
+                link.description = description;
+              }
+            });
+            state.version = state.version + 1;
+          })
+        );
+      },
       deleteLink(id: string) {
         setState(
           produce((state: any) => {

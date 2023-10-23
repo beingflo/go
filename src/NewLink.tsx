@@ -1,20 +1,30 @@
 import { Component, createSignal } from "solid-js";
 import { useStore } from "./store";
+import { Link } from "./Link";
 
 export type NewLinkProps = {
   onEditEnd: () => void;
+  editLink?: Link;
   ref: any;
 };
 
 const NewLink: Component<NewLinkProps> = (props) => {
-  const [, { newLink }] = useStore();
-  const [newLinkUrl, setNewLinkUrl] = createSignal("");
-  const [newLinkDescription, setNewLinkDescription] = createSignal("");
+  const [, { newLink, updateLink }] = useStore();
+  const [newLinkUrl, setNewLinkUrl] = createSignal(null);
+  const [newLinkDescription, setNewLinkDescription] = createSignal(null);
 
   const onEditEnd = (event) => {
     event?.preventDefault();
 
-    newLink(newLinkUrl(), newLinkDescription());
+    if (props.editLink) {
+      updateLink(
+        props.editLink?.id,
+        newLinkUrl() ?? props.editLink?.url,
+        newLinkDescription() ?? props.editLink?.description
+      );
+    } else {
+      newLink(newLinkUrl(), newLinkDescription());
+    }
     props.onEditEnd();
   };
 
@@ -27,6 +37,7 @@ const NewLink: Component<NewLinkProps> = (props) => {
             class="w-full border border-dashed border-gray-400 focus:outline-none"
             placeholder="url"
             ref={props.ref}
+            value={props.editLink?.url ?? ""}
             onInput={(event) => setNewLinkUrl(event?.currentTarget.value)}
           />
         </form>
@@ -36,6 +47,7 @@ const NewLink: Component<NewLinkProps> = (props) => {
           <input
             class="w-full border border-dashed border-gray-400 focus:outline-none"
             placeholder="description"
+            value={props.editLink?.description ?? ""}
             onInput={(event) =>
               setNewLinkDescription(event?.currentTarget.value)
             }

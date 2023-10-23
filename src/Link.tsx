@@ -1,13 +1,17 @@
 import { Component } from "solid-js";
 import { useStore } from "./store";
 
-export type LinkProps = {
+export type Link = {
   id: string;
   url: string;
   description: string;
   lastAccessedAt: string;
   numAccessed: number;
+};
+
+export type LinkProps = Link & {
   selected?: boolean;
+  onEdit?: (link: Link) => void;
 };
 
 const Link: Component<LinkProps> = (props: LinkProps) => {
@@ -29,6 +33,20 @@ const Link: Component<LinkProps> = (props: LinkProps) => {
             class="hover:cursor-pointer"
           >
             del
+          </div>
+          <div
+            onClick={() =>
+              props.onEdit({
+                id: props.id,
+                url: props.url,
+                description: props.description,
+                numAccessed: props.numAccessed,
+                lastAccessedAt: props.lastAccessedAt,
+              })
+            }
+            class="hover:cursor-pointer"
+          >
+            edit
           </div>
         </div>
       </div>

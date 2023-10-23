@@ -13,6 +13,7 @@ const App: Component = () => {
   const [showConfig, setShowConfig] = createSignal(false);
   const [newLinkMode, setNewLinkMode] = createSignal(false);
   const [searchTerm, setSearchTerm] = createSignal("");
+  const [editLink, setEditLink] = createSignal(null);
   const [selectedLinkIdx, setSelectedLinkIdx] = createSignal(0);
 
   let searchInputRef;
@@ -41,13 +42,13 @@ const App: Component = () => {
     return filteredLinks;
   };
 
-  const onEdit = () => {
+  const onNew = () => {
     setNewLinkMode(true);
     newLinkInputRef?.focus();
   };
 
   const followLink = (newTab: boolean) => {
-    if (newLinkMode()) {
+    if (newLinkMode() || editLink()) {
       return;
     }
     const link = links()[selectedLinkIdx()];
@@ -73,9 +74,10 @@ const App: Component = () => {
   }
 
   const cleanup = tinykeys(window, {
-    n: validateEvent(onEdit),
+    n: validateEvent(onNew),
     Escape: () => {
       setNewLinkMode(false);
+      setEditLink(null);
       searchInputRef.blur();
     },
     Enter: () => followLink(false),
@@ -120,14 +122,30 @@ const App: Component = () => {
               </Show>
               <For each={links()}>
                 {(link, idx) => (
-                  <Link
-                    id={link.id}
-                    url={link.url}
-                    description={link.description}
-                    lastAccessedAt={link.lastAccessedAt}
-                    numAccessed={link.numAccessed}
-                    selected={idx() === selectedLinkIdx()}
-                  />
+                  <Show
+                    when={link.id === editLink()?.id}
+                    fallback={
+                      <Link
+                        id={link.id}
+                        url={link.url}
+                        description={link.description}
+                        lastAccessedAt={link.lastAccessedAt}
+                        numAccessed={link.numAccessed}
+                        selected={idx() === selectedLinkIdx()}
+                        onEdit={(link) => {
+                          setEditLink(link);
+                        }}
+                      />
+                    }
+                  >
+                    <NewLink
+                      ref={newLinkInputRef}
+                      editLink={editLink()}
+                      onEditEnd={() => {
+                        setEditLink(null);
+                      }}
+                    />
+                  </Show>
                 )}
               </For>
             </div>
