@@ -18,7 +18,7 @@ const Link: Component<LinkProps> = (props: LinkProps) => {
       <div class="flex flex-row gap-2 text-sm font-light col-span-12 md:col-span-6 underline-offset-4">
         <a
           href={props.url}
-          class={`${props.selected ? "underline" : ""} truncate`}
+          class={`${props.selected ? "!underline" : ""} truncate`}
           title={props.url}
         >
           {props.url}
