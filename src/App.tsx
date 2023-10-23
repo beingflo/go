@@ -79,7 +79,7 @@ const App: Component = () => {
     "$mod+Enter": () => followLink(true),
     h: validateEvent(toggleHelp),
     c: validateEvent(() => setShowConfig(!showConfig())),
-    "g o": validateEvent(() => {
+    "$mod+k": validateEvent(() => {
       searchInputRef.focus();
     }),
     ArrowUp: () => setSelectedLinkIdx((oldIdx) => Math.max(oldIdx - 1, 0)),
