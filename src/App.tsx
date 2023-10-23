@@ -67,7 +67,9 @@ const App: Component = () => {
 
   if (searchUrlParam) {
     setSearchTerm(searchUrlParam);
-    followLink(false);
+    if (links().length === 1) {
+      followLink(false);
+    }
   }
 
   const cleanup = tinykeys(window, {
