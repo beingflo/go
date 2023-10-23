@@ -59,6 +59,7 @@ const App: Component = () => {
 
     if (newTab) {
       window.open(link?.url);
+      setSearchTerm("");
     } else {
       location.href = link?.url;
     }
