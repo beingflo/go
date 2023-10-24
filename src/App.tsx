@@ -7,6 +7,7 @@ import { validateEvent } from "./utils";
 import Link from "./Link";
 import NewLink from "./NewLink";
 import { s3Sync } from "./s3-utils";
+import Import from "./Import";
 
 const App: Component = () => {
   const [state, { toggleHelp, accessLink }] = useStore();
@@ -15,6 +16,7 @@ const App: Component = () => {
   const [searchTerm, setSearchTerm] = createSignal("");
   const [editLink, setEditLink] = createSignal(null);
   const [selectedLinkIdx, setSelectedLinkIdx] = createSignal(0);
+  const [showImport, setShowImport] = createSignal(false);
 
   let searchInputRef;
   let newLinkInputRef;
@@ -83,6 +85,7 @@ const App: Component = () => {
     Enter: () => followLink(false),
     "$mod+Enter": () => followLink(true),
     h: validateEvent(toggleHelp),
+    i: validateEvent(() => setShowImport((old) => !old)),
     c: validateEvent(() => setShowConfig(!showConfig())),
     "$mod+k": validateEvent(() => {
       searchInputRef.focus();
@@ -101,61 +104,63 @@ const App: Component = () => {
 
   return (
     <Show when={state.help} fallback={<Help />}>
-      <Show when={!showConfig()} fallback={<Configuration />}>
-        <div class="flex flex-col w-full p-2 md:p-4">
-          <div class="w-full max-w-8xl mx-auto">
-            <form onSubmit={(event) => event.preventDefault()}>
-              <input
-                type="text"
-                ref={searchInputRef}
-                class="focus:outline-none w-full text-md placeholder:font-thin block mb-12 border-0 focus:ring-0"
-                placeholder="Go somewhere..."
-                autofocus
-                value={searchTerm()}
-                onInput={(event) => {
-                  setSearchTerm(event?.currentTarget?.value);
-                  setSelectedLinkIdx(0);
-                }}
-              />
-            </form>
-            <div class="flex flex-col gap-4">
-              <Show when={newLinkMode()}>
-                <NewLink
-                  ref={newLinkInputRef}
-                  onEditEnd={() => setNewLinkMode(false)}
+      <Show when={!showImport()} fallback={<Import />}>
+        <Show when={!showConfig()} fallback={<Configuration />}>
+          <div class="flex flex-col w-full p-2 md:p-4">
+            <div class="w-full max-w-8xl mx-auto">
+              <form onSubmit={(event) => event.preventDefault()}>
+                <input
+                  type="text"
+                  ref={searchInputRef}
+                  class="focus:outline-none w-full text-md placeholder:font-thin block mb-12 border-0 focus:ring-0"
+                  placeholder="Go somewhere..."
+                  autofocus
+                  value={searchTerm()}
+                  onInput={(event) => {
+                    setSearchTerm(event?.currentTarget?.value);
+                    setSelectedLinkIdx(0);
+                  }}
                 />
-              </Show>
-              <For each={links()}>
-                {(link, idx) => (
-                  <Show
-                    when={link.id === editLink()?.id}
-                    fallback={
-                      <Link
-                        id={link.id}
-                        url={link.url}
-                        description={link.description}
-                        lastAccessedAt={link.lastAccessedAt}
-                        numAccessed={link.numAccessed}
-                        selected={idx() === selectedLinkIdx()}
-                        onEdit={(link) => {
-                          setEditLink(link);
+              </form>
+              <div class="flex flex-col gap-4">
+                <Show when={newLinkMode()}>
+                  <NewLink
+                    ref={newLinkInputRef}
+                    onEditEnd={() => setNewLinkMode(false)}
+                  />
+                </Show>
+                <For each={links()}>
+                  {(link, idx) => (
+                    <Show
+                      when={link.id === editLink()?.id}
+                      fallback={
+                        <Link
+                          id={link.id}
+                          url={link.url}
+                          description={link.description}
+                          lastAccessedAt={link.lastAccessedAt}
+                          numAccessed={link.numAccessed}
+                          selected={idx() === selectedLinkIdx()}
+                          onEdit={(link) => {
+                            setEditLink(link);
+                          }}
+                        />
+                      }
+                    >
+                      <NewLink
+                        ref={newLinkInputRef}
+                        editLink={editLink()}
+                        onEditEnd={() => {
+                          setEditLink(null);
                         }}
                       />
-                    }
-                  >
-                    <NewLink
-                      ref={newLinkInputRef}
-                      editLink={editLink()}
-                      onEditEnd={() => {
-                        setEditLink(null);
-                      }}
-                    />
-                  </Show>
-                )}
-              </For>
+                    </Show>
+                  )}
+                </For>
+              </div>
             </div>
           </div>
-        </div>
+        </Show>
       </Show>
     </Show>
   );
