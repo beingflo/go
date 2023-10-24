@@ -30,11 +30,23 @@ const Help: Component = () => {
       <Instruction left="c" right="Toggle configuration screen" />
       <Instruction left="cmd + k" right="Focus search input" />
       <h2 class="text-xl font-semibold mt-12">S3 synchronization and backup</h2>
-      <p class="mt-4 pb-10">
+      <p class="my-4">
         In the configuration of this app, you can add an endpoint and
         credentials for an S3 provider. If this is provided, the application
         will synchronize the local state with the S3 bucket when gaining or
         losing focus.
+      </p>
+      <h2 class="text-xl font-semibold mt-12">Firefox url bar search</h2>
+      <p class="mt-4 pb-10">
+        With Firefox, there is a handy way to search for and jump directly to
+        links saved in go with keyword search: Right click in the input field at
+        the top of the page, select 'Add a keyword for this search'. Next, edit
+        the search bookmark and modify the URL field to{" "}
+        <span class="font-mono">https://go.rest.quest/?q=%s</span>. Now you can
+        enter your keyword followed by your query in the browsers url bar. In
+        this mode, the application will jump directly to the top link if only
+        one satisfies the query, otherwise you will reach the app and can decide
+        which link to follow.
       </p>
     </div>
   );

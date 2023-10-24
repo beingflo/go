@@ -19,7 +19,7 @@ const Link: Component<LinkProps> = (props: LinkProps) => {
 
   return (
     <div class="w-full grid grid-cols-12 group gap-2">
-      <div class="flex flex-row gap-2 text-sm font-light col-span-12 md:col-span-6 underline-offset-4">
+      <div class="flex flex-row gap-2 text-sm font-light col-span-12 md:col-span-6">
         <a
           href={props.url}
           class={`${props.selected ? "!underline" : ""} truncate`}

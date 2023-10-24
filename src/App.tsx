@@ -87,9 +87,14 @@ const App: Component = () => {
     "$mod+k": validateEvent(() => {
       searchInputRef.focus();
     }),
-    ArrowUp: () => setSelectedLinkIdx((oldIdx) => Math.max(oldIdx - 1, 0)),
-    ArrowDown: () =>
-      setSelectedLinkIdx((oldIdx) => Math.min(oldIdx + 1, links().length - 1)),
+    ArrowUp: (event) => {
+      setSelectedLinkIdx((oldIdx) => Math.max(oldIdx - 1, 0));
+      event.preventDefault();
+    },
+    ArrowDown: (event) => {
+      setSelectedLinkIdx((oldIdx) => Math.min(oldIdx + 1, links().length - 1));
+      event.preventDefault();
+    },
   });
 
   onCleanup(cleanup);
