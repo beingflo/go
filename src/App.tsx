@@ -25,7 +25,7 @@ const App: Component = () => {
 
   const syncState = async () => {
     const droppedLinks = await s3Sync(state);
-    setDropped(droppedLinks);
+    setDropped(droppedLinks ?? [0, 0]);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 4000);
   };
@@ -38,7 +38,9 @@ const App: Component = () => {
     const terms = searchTerm()?.split(" ");
     const filteredLinks = visibleLinks?.filter((link) =>
       terms.every(
-        (term) => link.url?.includes(term) || link.description?.includes(term)
+        (term) =>
+          link.url?.toLowerCase()?.includes(term?.toLowerCase()) ||
+          link.description?.toLowerCase()?.includes(term?.toLowerCase())
       )
     );
     filteredLinks?.sort((a, b) => b.numAccessed - a.numAccessed);
@@ -106,7 +108,10 @@ const App: Component = () => {
 
   return (
     <Show when={state.help} fallback={<Help />}>
-      <Show when={!showImport()} fallback={<Import />}>
+      <Show
+        when={!showImport()}
+        fallback={<Import closeImport={() => setShowImport(false)} />}
+      >
         <Show when={!showConfig()} fallback={<Configuration />}>
           <div class="flex flex-col w-full p-2 md:p-4">
             <div class="w-full max-w-8xl mx-auto">
@@ -143,6 +148,7 @@ const App: Component = () => {
                           lastAccessedAt={link.lastAccessedAt}
                           numAccessed={link.numAccessed}
                           selected={idx() === selectedLinkIdx()}
+                          showControls={true}
                           onEdit={(link) => {
                             setEditLink(link);
                           }}

@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import { Component, Show } from "solid-js";
 import { useStore } from "./store";
 
 export type Link = {
@@ -12,6 +12,7 @@ export type Link = {
 export type LinkProps = Link & {
   selected?: boolean;
   onEdit?: (link: Link) => void;
+  showControls?: boolean;
 };
 
 const Link: Component<LinkProps> = (props: LinkProps) => {
@@ -27,28 +28,30 @@ const Link: Component<LinkProps> = (props: LinkProps) => {
         >
           {props.url}
         </a>
-        <div class="hidden group-hover:flex text-sm font-light flex-row gap-2">
-          <div
-            onClick={() => deleteLink(props.id)}
-            class="hover:cursor-pointer"
-          >
-            del
+        <Show when={props.showControls}>
+          <div class="hidden group-hover:flex text-sm font-light flex-row gap-2">
+            <div
+              onClick={() => deleteLink(props.id)}
+              class="hover:cursor-pointer"
+            >
+              del
+            </div>
+            <div
+              onClick={() =>
+                props.onEdit({
+                  id: props.id,
+                  url: props.url,
+                  description: props.description,
+                  numAccessed: props.numAccessed,
+                  lastAccessedAt: props.lastAccessedAt,
+                })
+              }
+              class="hover:cursor-pointer"
+            >
+              edit
+            </div>
           </div>
-          <div
-            onClick={() =>
-              props.onEdit({
-                id: props.id,
-                url: props.url,
-                description: props.description,
-                numAccessed: props.numAccessed,
-                lastAccessedAt: props.lastAccessedAt,
-              })
-            }
-            class="hover:cursor-pointer"
-          >
-            edit
-          </div>
-        </div>
+        </Show>
       </div>
       <div
         class="hidden md:block text-sm font-light text-left col-span-4 truncate"
