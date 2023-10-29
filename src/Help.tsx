@@ -28,13 +28,17 @@ const Help: Component = () => {
       <Instruction left="cmd + enter" right="Visit selected link in new tab" />
       <Instruction left="arrow up / down" right="Change selected link" />
       <Instruction left="c" right="Toggle configuration screen" />
+      <Instruction
+        left="s"
+        right="Synchronize state with remote if configured"
+      />
       <Instruction left="cmd + k" right="Focus search input" />
       <h2 class="text-xl font-semibold mt-12">S3 synchronization and backup</h2>
       <p class="my-4">
         In the configuration of this app, you can add an endpoint and
         credentials for an S3 provider. If this is provided, the application
-        will synchronize the local state with the S3 bucket when gaining or
-        losing focus.
+        will synchronize the local state with the S3 bucket when pressing{" "}
+        <b>s</b>.
       </p>
       <h2 class="text-xl font-semibold mt-12">Firefox url bar search</h2>
       <p class="mt-4 pb-10">
