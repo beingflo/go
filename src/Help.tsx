@@ -28,6 +28,7 @@ const Help: Component = () => {
       <Instruction left="cmd + enter" right="Visit selected link in new tab" />
       <Instruction left="arrow up / down" right="Change selected link" />
       <Instruction left="c" right="Toggle configuration screen" />
+      <Instruction left="i" right="Toggle import screen" />
       <Instruction
         left="s"
         right="Synchronize state with remote if configured"
@@ -41,7 +42,7 @@ const Help: Component = () => {
         <b>s</b>.
       </p>
       <h2 class="text-xl font-semibold mt-12">Firefox url bar search</h2>
-      <p class="mt-4 pb-10">
+      <p class="my-4">
         With Firefox, there is a handy way to search for and jump directly to
         links saved in go with keyword search: Right click in the input field at
         the top of the page, select 'Add a keyword for this search'. Next, edit
@@ -51,6 +52,14 @@ const Help: Component = () => {
         this mode, the application will jump directly to the top link if only
         one satisfies the query, otherwise you will reach the app and can decide
         which link to follow.
+      </p>
+      <h2 class="text-xl font-semibold mt-12">Firefox bookmark import</h2>
+      <p class="mt-4 pb-10">
+        This app implements a rudimentary bookmark import functionality. On
+        Firefox, navigate to the bookmark manager and export your bookmarks to a
+        JSON file. Then hit <b>i</b> in the normal view on go.rest.quest and
+        select your file. You can now import all your bookmarks and edit /
+        delete them from the main view as you desire.
       </p>
     </div>
   );
