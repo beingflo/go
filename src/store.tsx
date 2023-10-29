@@ -49,7 +49,7 @@ export function StoreProvider(props) {
               createdAt: Date.now(),
               lastAccessedAt: null,
               numAccessed: 0,
-              deleted: false,
+              deletedAt: null,
             },
           ],
           version: state.version + 1,
@@ -62,6 +62,7 @@ export function StoreProvider(props) {
               if (link.id === id) {
                 link.url = url;
                 link.description = description;
+                link.lastAccessedAt = Date.now();
               }
             });
             state.version = state.version + 1;
@@ -73,7 +74,8 @@ export function StoreProvider(props) {
           produce((state: any) => {
             state.links.forEach((link) => {
               if (link.id === id) {
-                link.deleted = true;
+                link.deletedAt = Date.now();
+                link.lastAccessedAt = Date.now();
               }
             });
             state.version = state.version + 1;

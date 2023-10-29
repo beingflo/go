@@ -1,9 +1,6 @@
 import { AwsClient } from "aws4fetch";
 import { setState } from "./store";
 
-type Index = { version: number };
-
-const IndexFile = "index.json";
 const StateFile = "state.json";
 
 export const s3Sync = async (state: any) => {
@@ -19,48 +16,73 @@ export const s3Sync = async (state: any) => {
     region: state?.s3?.region,
   });
 
-  const indexResponse = await aws.fetch(`${state?.s3?.endpoint}${IndexFile}`, {
+  console.info("Sync state");
+
+  const linksResponse = await aws.fetch(`${state?.s3?.endpoint}${StateFile}`, {
     method: "GET",
   });
-  const remoteIndex: Index =
-    indexResponse.status === 200 ? await indexResponse.json() : [];
 
-  if (state.version === remoteIndex.version) {
-    // No need to sync
-    console.info("No sync");
+  const remoteLinks =
+    linksResponse.status === 200 ? await linksResponse.json() : [];
 
-    return;
-  } else if (state.version > remoteIndex.version || !remoteIndex.version) {
-    // We have newer state
-    console.info("Sync local state");
+  const [merged, droppedLocal, droppedRemote] = mergeState(
+    state.links,
+    remoteLinks.links
+  );
 
-    await aws.fetch(`${state?.s3?.endpoint}${IndexFile}`, {
-      method: "PUT",
-      body: JSON.stringify({ version: state.version }),
-    });
+  setState({
+    links: [...merged],
+  });
 
-    await aws.fetch(`${state?.s3?.endpoint}${StateFile}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        links: state.links,
-      }),
-    });
-  } else {
-    // Remote has newer state
-    console.info("Sync remote state");
+  await aws.fetch(`${state?.s3?.endpoint}${StateFile}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      links: merged,
+    }),
+  });
 
-    const linksResponse = await aws.fetch(
-      `${state?.s3?.endpoint}${StateFile}`,
-      {
-        method: "GET",
+  return [droppedLocal, droppedRemote];
+};
+
+export const mergeState = (
+  local = [],
+  remote = []
+): [Array<any>, number, number] => {
+  const merged = [];
+  let droppedLocal = 0;
+  let droppedRemote = 0;
+
+  // Add links that are only remote
+  remote?.forEach((link) => {
+    if (!local?.find((l) => l.id === link.id)) {
+      merged.push(link);
+    }
+  });
+
+  // Add links that are only local
+  local?.forEach((link) => {
+    if (!remote?.find((l) => l.id === link.id)) {
+      merged.push(link);
+    }
+  });
+
+  // From links that appear in both, take the one that has been modified last
+  local?.forEach((localLink) => {
+    const remoteLink = remote?.find((l) => l.id === localLink.id);
+    if (remoteLink) {
+      if (localLink?.lastAccessedAt < remoteLink.lastAccessedAt) {
+        merged.push(remoteLink);
+        console.info(`Dropping old local: ${JSON.stringify(localLink)}`);
+        droppedLocal += 1;
+      } else if (localLink.lastAccessedAt > remoteLink.lastAccessedAt) {
+        merged.push(localLink);
+        console.info(`Dropping old remote: ${JSON.stringify(remoteLink)}`);
+        droppedRemote += 1;
+      } else {
+        merged.push(localLink);
       }
-    );
-    const links =
-      linksResponse.status === 200 ? await linksResponse.json() : {};
+    }
+  });
 
-    setState({
-      ...links,
-      version: remoteIndex.version,
-    });
-  }
+  return [merged, droppedLocal, droppedRemote];
 };

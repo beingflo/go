@@ -17,23 +17,24 @@ const App: Component = () => {
   const [editLink, setEditLink] = createSignal(null);
   const [selectedLinkIdx, setSelectedLinkIdx] = createSignal(0);
   const [showImport, setShowImport] = createSignal(false);
+  const [dropped, setDropped] = createSignal([0, 0]);
+  const [showToast, setShowToast] = createSignal(false);
 
   let searchInputRef;
   let newLinkInputRef;
 
-  const syncState = () => {
-    s3Sync(state);
+  const syncState = async () => {
+    const droppedLinks = await s3Sync(state);
+    setDropped(droppedLinks);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 4000);
   };
-
-  document.addEventListener("visibilitychange", syncState);
-
-  onCleanup(() => document.removeEventListener("visibilitychange", syncState));
 
   const urlParams = new URLSearchParams(window.location.search);
   const searchUrlParam = urlParams.get("q");
 
   const links = () => {
-    const visibleLinks = state.links?.filter((link) => !link.deleted) ?? [];
+    const visibleLinks = state.links?.filter((link) => !link.deletedAt) ?? [];
     const terms = searchTerm()?.split(" ");
     const filteredLinks = visibleLinks?.filter((link) =>
       terms.every(
@@ -85,6 +86,7 @@ const App: Component = () => {
     Enter: () => followLink(false),
     "$mod+Enter": () => followLink(true),
     h: validateEvent(toggleHelp),
+    s: validateEvent(syncState),
     i: validateEvent(() => setShowImport((old) => !old)),
     c: validateEvent(() => setShowConfig(!showConfig())),
     "$mod+k": validateEvent(() => {
@@ -160,6 +162,11 @@ const App: Component = () => {
               </div>
             </div>
           </div>
+          <Show when={showToast()}>
+            <div class="fixed bottom-0 right-0 bg-white p-2 font-light text-sm">
+              Synced: Dropped {dropped()[0]} local, {dropped()[1]} remote
+            </div>
+          </Show>
         </Show>
       </Show>
     </Show>
