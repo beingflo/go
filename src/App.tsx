@@ -43,7 +43,7 @@ const App: Component = () => {
           link.description?.toLowerCase()?.includes(term?.toLowerCase())
       )
     );
-    filteredLinks?.sort((a, b) => b.numAccessed - a.numAccessed);
+    filteredLinks?.sort((a, b) => b.lastAccessedAt - a.lastAccessedAt);
     return filteredLinks;
   };
 
@@ -58,6 +58,7 @@ const App: Component = () => {
     }
     const link = links()[selectedLinkIdx()];
     accessLink(link?.id);
+    setSelectedLinkIdx(0);
 
     if (!link) {
       return;
