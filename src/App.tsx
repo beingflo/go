@@ -26,7 +26,6 @@ const App: Component = () => {
 
   const syncState = async () => {
     if (!syncing()) {
-      console.log("syncing");
       const droppedLinks = await s3Sync(state);
       setDropped(droppedLinks ?? [0, 0]);
       setShowToast(true);
