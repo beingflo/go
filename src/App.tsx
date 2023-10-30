@@ -19,15 +19,21 @@ const App: Component = () => {
   const [showImport, setShowImport] = createSignal(false);
   const [dropped, setDropped] = createSignal([0, 0]);
   const [showToast, setShowToast] = createSignal(false);
+  const [syncing, setSyncing] = createSignal(false);
 
   let searchInputRef;
   let newLinkInputRef;
 
   const syncState = async () => {
-    const droppedLinks = await s3Sync(state);
-    setDropped(droppedLinks ?? [0, 0]);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 4000);
+    if (!syncing()) {
+      console.log("syncing");
+      const droppedLinks = await s3Sync(state);
+      setDropped(droppedLinks ?? [0, 0]);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 4000);
+      setSyncing(true);
+      setTimeout(() => setSyncing(false), 500);
+    }
   };
 
   const urlParams = new URLSearchParams(window.location.search);
