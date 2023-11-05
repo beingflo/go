@@ -29,7 +29,7 @@ export const s3Sync = async (state: any) => {
     remoteLinks = await linksResponse.json();
   } catch {}
 
-  const [merged, droppedLocal, droppedRemote] = mergeState(
+  const [merged, newLocal, newRemote, droppedLocal, droppedRemote] = mergeState(
     state.links,
     remoteLinks.links
   );
@@ -45,14 +45,16 @@ export const s3Sync = async (state: any) => {
     }),
   });
 
-  return [droppedLocal, droppedRemote];
+  return [newLocal, newRemote, droppedLocal, droppedRemote];
 };
 
 export const mergeState = (
   local = [],
   remote = []
-): [Array<any>, number, number] => {
+): [Array<any>, number, number, number, number] => {
   const merged = [];
+  let newLocal = 0;
+  let newRemote = 0;
   let droppedLocal = 0;
   let droppedRemote = 0;
 
@@ -60,6 +62,7 @@ export const mergeState = (
   remote?.forEach((link) => {
     if (!local?.find((l) => l.id === link.id)) {
       merged.push(link);
+      newRemote += 1;
     }
   });
 
@@ -67,6 +70,7 @@ export const mergeState = (
   local?.forEach((link) => {
     if (!remote?.find((l) => l.id === link.id)) {
       merged.push(link);
+      newLocal += 1;
     }
   });
 
@@ -88,5 +92,5 @@ export const mergeState = (
     }
   });
 
-  return [merged, droppedLocal, droppedRemote];
+  return [merged, newLocal, newRemote, droppedLocal, droppedRemote];
 };

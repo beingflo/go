@@ -6,34 +6,19 @@ import { useStore } from "./store";
 import { validateEvent } from "./utils";
 import Link from "./Link";
 import NewLink from "./NewLink";
-import { s3Sync } from "./s3-utils";
 import Import from "./Import";
 
 const App: Component = () => {
-  const [state, { toggleHelp, accessLink }] = useStore();
+  const [state, { toggleHelp, accessLink, syncState }] = useStore();
   const [showConfig, setShowConfig] = createSignal(false);
   const [newLinkMode, setNewLinkMode] = createSignal(false);
   const [searchTerm, setSearchTerm] = createSignal("");
   const [editLink, setEditLink] = createSignal(null);
   const [selectedLinkIdx, setSelectedLinkIdx] = createSignal(0);
   const [showImport, setShowImport] = createSignal(false);
-  const [dropped, setDropped] = createSignal([0, 0]);
-  const [showToast, setShowToast] = createSignal(false);
-  const [syncing, setSyncing] = createSignal(false);
 
   let searchInputRef;
   let newLinkInputRef;
-
-  const syncState = async () => {
-    if (!syncing()) {
-      const droppedLinks = await s3Sync(state);
-      setDropped(droppedLinks ?? [0, 0]);
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 4000);
-      setSyncing(true);
-      setTimeout(() => setSyncing(false), 500);
-    }
-  };
 
   const urlParams = new URLSearchParams(window.location.search);
   const searchUrlParam = urlParams.get("q");
@@ -174,9 +159,16 @@ const App: Component = () => {
               </div>
             </div>
           </div>
-          <Show when={showToast()}>
-            <div class="fixed bottom-0 right-0 bg-white p-2 font-light text-sm">
-              Synced: Dropped {dropped()[0]} local, {dropped()[1]} remote
+          <Show when={state.showToast}>
+            <div class="fixed bottom-0 right-0 grid gap-x-2 grid-cols-2 bg-white p-2 font-light text-sm">
+              <p class="text-right">new</p>
+              <p>
+                {state?.new[0]} local, {state?.new[1]} remote
+              </p>
+              <p class="text-right">old</p>
+              <p>
+                {state?.dropped[0]} local, {state?.dropped[1]} remote
+              </p>
             </div>
           </Show>
         </Show>

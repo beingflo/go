@@ -1,5 +1,6 @@
 import { createContext, createEffect, useContext } from "solid-js";
 import { createStore, produce } from "solid-js/store";
+import { s3Sync } from "./s3-utils";
 
 export const getNewId = () => crypto.randomUUID();
 
@@ -10,7 +11,7 @@ const StoreContext = createContext({});
 const localState = localStorage.getItem(storeName);
 
 export const [state, setState] = createStore(
-  localState ? JSON.parse(localState) : { version: 0 }
+  localState ? JSON.parse(localState) : {}
 );
 
 export function StoreProvider(props) {
@@ -34,7 +35,6 @@ export function StoreProvider(props) {
                 link.lastAccessedAt = Date.now();
               }
             });
-            state.version = state.version + 1;
           })
         );
       },
@@ -52,7 +52,6 @@ export function StoreProvider(props) {
               deletedAt: null,
             },
           ],
-          version: state.version + 1,
         });
       },
       updateLink(id: string, url: string, description: string) {
@@ -65,7 +64,6 @@ export function StoreProvider(props) {
                 link.lastAccessedAt = Date.now();
               }
             });
-            state.version = state.version + 1;
           })
         );
       },
@@ -78,9 +76,21 @@ export function StoreProvider(props) {
                 link.lastAccessedAt = Date.now();
               }
             });
-            state.version = state.version + 1;
           })
         );
+      },
+      async syncState() {
+        const [newLocal, newRemote, droppedLocal, droppedRemote] = await s3Sync(
+          state
+        );
+
+        setTimeout(() => setState({ showToast: false }), 4000);
+
+        setState({
+          new: [newLocal, newRemote] ?? [0, 0],
+          dropped: [droppedLocal, droppedRemote] ?? [0, 0],
+          showToast: true,
+        });
       },
     },
   ];
