@@ -33,7 +33,10 @@ const App: Component = () => {
           link.description?.toLowerCase()?.includes(term?.toLowerCase())
       )
     );
-    filteredLinks?.sort((a, b) => b.lastAccessedAt - a.lastAccessedAt);
+    filteredLinks?.sort(
+      (a, b) =>
+        (b.lastAccessedAt ?? b.createdAt) - (a.lastAccessedAt ?? a.createdAt)
+    );
     return filteredLinks;
   };
 
