@@ -9,7 +9,7 @@ export type NewLinkProps = {
 };
 
 const NewLink: Component<NewLinkProps> = (props) => {
-  const [, { newLink, updateLink }] = useStore();
+  const [, { newLink, updateLink, syncState }] = useStore();
   const [newLinkUrl, setNewLinkUrl] = createSignal(null);
   const [newLinkDescription, setNewLinkDescription] = createSignal(null);
 
@@ -25,6 +25,7 @@ const NewLink: Component<NewLinkProps> = (props) => {
     } else {
       newLink(newLinkUrl(), newLinkDescription());
     }
+    syncState();
     props.onEditEnd();
   };
 
