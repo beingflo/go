@@ -19,15 +19,10 @@ export const s3Sync = async (state: any) => {
   console.info("Sync state");
 
   let remoteLinks = { links: [] };
-  try {
-    const linksResponse = await aws.fetch(
-      `${state?.s3?.endpoint}${StateFile}`,
-      {
-        method: "GET",
-      }
-    );
-    remoteLinks = await linksResponse.json();
-  } catch {}
+  const linksResponse = await aws.fetch(`${state?.s3?.endpoint}${StateFile}`, {
+    method: "GET",
+  });
+  remoteLinks = await linksResponse.json();
 
   const [merged, newLocal, newRemote, droppedLocal, droppedRemote] = mergeState(
     state.links,
