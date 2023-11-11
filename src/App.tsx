@@ -1,4 +1,12 @@
-import { Component, createSignal, For, onCleanup, Show } from "solid-js";
+import {
+  Component,
+  createSignal,
+  For,
+  Match,
+  onCleanup,
+  Show,
+  Switch,
+} from "solid-js";
 import { tinykeys } from "tinykeys";
 import Help from "./Help";
 import Configuration from "./Configuration";
@@ -10,13 +18,11 @@ import Import from "./Import";
 import { ephemeralStore } from "./ephemeralStore";
 
 const App: Component = () => {
-  const [state, { toggleHelp, accessLink, syncState }] = useStore();
-  const [showConfig, setShowConfig] = createSignal(false);
+  const [state, { cycleScreen, accessLink, syncState }] = useStore();
   const [newLinkMode, setNewLinkMode] = createSignal(false);
   const [searchTerm, setSearchTerm] = createSignal("");
   const [editLink, setEditLink] = createSignal(null);
   const [selectedLinkIdx, setSelectedLinkIdx] = createSignal(0);
-  const [showImport, setShowImport] = createSignal(false);
 
   let searchInputRef;
   let newLinkInputRef;
@@ -82,10 +88,10 @@ const App: Component = () => {
     },
     Enter: () => followLink(false),
     "$mod+Enter": () => followLink(true),
-    h: validateEvent(toggleHelp),
+    h: validateEvent(() => cycleScreen("help")),
+    c: validateEvent(() => cycleScreen("config")),
     s: validateEvent(syncState),
-    i: validateEvent(() => setShowImport((old) => !old)),
-    c: validateEvent(() => setShowConfig(!showConfig())),
+    i: validateEvent(() => cycleScreen("import")),
     "$mod+k": validateEvent(() => {
       searchInputRef.focus();
     }),
@@ -102,12 +108,9 @@ const App: Component = () => {
   onCleanup(cleanup);
 
   return (
-    <Show when={state.help} fallback={<Help />}>
-      <Show
-        when={!showImport()}
-        fallback={<Import closeImport={() => setShowImport(false)} />}
-      >
-        <Show when={!showConfig()} fallback={<Configuration />}>
+    <Switch
+      fallback={
+        <>
           <div class="flex flex-col w-full p-2 md:p-4">
             <div class="w-full max-w-8xl mx-auto">
               <form onSubmit={(event) => event.preventDefault()}>
@@ -176,9 +179,19 @@ const App: Component = () => {
               </p>
             </div>
           </Show>
-        </Show>
-      </Show>
-    </Show>
+        </>
+      }
+    >
+      <Match when={state.screen === "help"}>
+        <Help />
+      </Match>
+      <Match when={state.screen === "config"}>
+        <Configuration />
+      </Match>
+      <Match when={state.screen === "import"}>
+        <Import />
+      </Match>
+    </Switch>
   );
 };
 

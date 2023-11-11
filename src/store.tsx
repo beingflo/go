@@ -21,8 +21,13 @@ export function StoreProvider(props) {
   const store = [
     state,
     {
-      toggleHelp() {
-        setState({ help: !state.help });
+      cycleScreen(screen: "help" | "config" | "app" | "import") {
+        const currentScreen = state.screen;
+        let newScreen = "app";
+        if (currentScreen !== screen) {
+          newScreen = screen;
+        }
+        setState({ screen: newScreen });
       },
       setS3Config(config: Object) {
         setState({ s3: config });

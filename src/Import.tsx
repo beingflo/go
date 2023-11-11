@@ -3,12 +3,8 @@ import { useStore } from "./store";
 import { parseBookmarks } from "./import-utils";
 import Link from "./Link";
 
-export type ImportProps = {
-  closeImport: () => void;
-};
-
-const Import: Component<ImportProps> = (props: ImportProps) => {
-  const [, { newLink }] = useStore();
+const Import: Component = () => {
+  const [, { newLink, cycleScreen }] = useStore();
   const [content, setContent] = createSignal("");
   let ref;
 
@@ -25,7 +21,7 @@ const Import: Component<ImportProps> = (props: ImportProps) => {
   const addBulkLinks = () => {
     const links = parseBookmarks(content());
     links.forEach((link) => newLink(link.url, link.description));
-    props.closeImport();
+    cycleScreen("import");
   };
 
   return (
