@@ -7,6 +7,7 @@ import { validateEvent } from "./utils";
 import Link from "./Link";
 import NewLink from "./NewLink";
 import Import from "./Import";
+import { ephemeralStore } from "./ephemeralStore";
 
 const App: Component = () => {
   const [state, { toggleHelp, accessLink, syncState }] = useStore();
@@ -162,15 +163,16 @@ const App: Component = () => {
               </div>
             </div>
           </div>
-          <Show when={state.showToast}>
+          <Show when={ephemeralStore.showToast}>
             <div class="fixed bottom-0 right-0 grid gap-x-2 grid-cols-2 bg-white p-2 font-light text-sm">
               <p class="text-right">new</p>
               <p>
-                {state?.new[0]} local, {state?.new[1]} remote
+                {ephemeralStore?.new[0]} local, {ephemeralStore?.new[1]} remote
               </p>
               <p class="text-right">old</p>
               <p>
-                {state?.dropped[0]} local, {state?.dropped[1]} remote
+                {ephemeralStore?.dropped[0]} local, {ephemeralStore?.dropped[1]}{" "}
+                remote
               </p>
             </div>
           </Show>
