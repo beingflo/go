@@ -16,6 +16,7 @@ import Link from "./Link";
 import NewLink from "./NewLink";
 import Import from "./Import";
 import { ephemeralStore } from "./ephemeralStore";
+import { Feedback } from "./Feedback";
 
 const App: Component = () => {
   const [state, { cycleScreen, accessLink, syncState }] = useStore();
@@ -90,6 +91,7 @@ const App: Component = () => {
     "$mod+Enter": () => followLink(true),
     h: validateEvent(() => cycleScreen("help")),
     c: validateEvent(() => cycleScreen("config")),
+    f: validateEvent(() => cycleScreen("feedback")),
     s: validateEvent(syncState),
     i: validateEvent(() => cycleScreen("import")),
     "$mod+k": validateEvent(() => {
@@ -190,6 +192,9 @@ const App: Component = () => {
       </Match>
       <Match when={state.screen === "import"}>
         <Import />
+      </Match>
+      <Match when={state.screen === "feedback"}>
+        <Feedback />
       </Match>
     </Switch>
   );

@@ -22,13 +22,14 @@ const Help: Component = () => {
         You're already in the application, press <b>h</b> to toggle the help
         screen!
       </p>
-      <Instruction left="h" right="Toggle help screen" />
+      <Instruction left="h" right="Show help screen" />
+      <Instruction left="f" right="Show feedback screen" />
       <Instruction left="n" right="Save a new link" />
       <Instruction left="enter" right="Visit selected link in tab" />
       <Instruction left="cmd + enter" right="Visit selected link in new tab" />
       <Instruction left="arrow up / down" right="Change selected link" />
-      <Instruction left="c" right="Toggle configuration screen" />
-      <Instruction left="i" right="Toggle import screen" />
+      <Instruction left="c" right="Show configuration screen" />
+      <Instruction left="i" right="Show import screen" />
       <Instruction
         left="s"
         right="Synchronize state with remote if configured"
