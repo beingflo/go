@@ -21,6 +21,7 @@ export const s3Sync = async (state: any) => {
   let remoteLinks = { links: [] };
   const linksResponse = await aws.fetch(`${state?.s3?.endpoint}${StateFile}`, {
     method: "GET",
+    headers: { "Cache-Control": "no-store" },
   });
   remoteLinks = await linksResponse.json();
 
