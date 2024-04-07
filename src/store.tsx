@@ -12,7 +12,7 @@ const StoreContext = createContext({});
 const localState = localStorage.getItem(storeName);
 
 export const [state, setState] = createStore(
-  localState ? JSON.parse(localState) : {}
+  localState ? JSON.parse(localState) : { screen: "help" }
 );
 
 export function StoreProvider(props) {
@@ -86,9 +86,8 @@ export function StoreProvider(props) {
         );
       },
       async syncState() {
-        const [newLocal, newRemote, droppedLocal, droppedRemote] = await s3Sync(
-          state
-        );
+        const [newLocal, newRemote, droppedLocal, droppedRemote] =
+          await s3Sync(state);
 
         setTimeout(() => setEphemeralStore({ showToast: false }), 4000);
 
