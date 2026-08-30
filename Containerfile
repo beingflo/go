@@ -1,5 +1,5 @@
 FROM node:23-bookworm AS ui-builder
-WORKDIR /usr/src/rest-quest/ui
+WORKDIR /usr/src/go/ui
 RUN apt update && apt install -y python3 libsdl-pango-dev brotli gzip
 ENV TZ="Europe/Zurich"
 
@@ -18,16 +18,16 @@ RUN find dist -type f \( -name "*.html" -o -name "*.js" -o -name "*.css" -o -nam
   -exec brotli -q 11 -k {} \;
 
 FROM rust:bookworm AS builder
-WORKDIR /usr/src/rest-quest/service
+WORKDIR /usr/src/go/service
 COPY ./service .
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
-    --mount=type=cache,target=/usr/src/rest-quest/service/target \
-    cargo build --release --bin rest-quest \
-    && cp target/release/rest-quest /rest-quest
+    --mount=type=cache,target=/usr/src/go/service/target \
+    cargo build --release --bin go \
+    && cp target/release/go /go
 
 FROM debian:bookworm-slim AS runtime
 WORKDIR /usr/src/app/
-COPY --from=builder /rest-quest /usr/src/app/rest-quest
-COPY --from=ui-builder /usr/src/rest-quest/ui/dist ./ui
-ENTRYPOINT ["/usr/src/app/rest-quest"]
+COPY --from=builder /go /usr/src/app/go
+COPY --from=ui-builder /usr/src/go/ui/dist ./ui
+ENTRYPOINT ["/usr/src/app/go"]

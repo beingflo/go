@@ -33,7 +33,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             error!(message = "SERVE_PORT is not a valid port", port);
             panic!()
         }),
-        Err(_) => 3000,
+        Err(_) => 3001,
     };
 
     // Vite hashes asset names, so their contents never change. Everything else

@@ -1,11 +1,11 @@
 [Unit]
-Description=rest.quest web service
+Description=go.rest.quest web service
 Wants=network-online.target
 After=network-online.target
 
 [Container]
-Image=localhost/rest-quest:__TAG__
-PublishPort=127.0.0.1:3000:3000
+Image=localhost/go:__TAG__
+PublishPort=127.0.0.1:3001:3001
 
 [Service]
 Restart=on-failure
